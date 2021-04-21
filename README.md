@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Final Project
 
 This is the final project for the course Frontend Development with React at Coursera.
 ## Available Scripts
