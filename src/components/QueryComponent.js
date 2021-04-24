@@ -10,10 +10,8 @@ function ResultTable({result}) {
         )
     }
     else{
-    alert(JSON.stringify(result));
     const columnNames = result.head.vars;
     const rows = result.results.bindings;
-    alert(JSON.stringify(columnNames));
     function getRow(row, index){
         const rowValue = columnNames.map((name)=>{
             return (

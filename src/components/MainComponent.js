@@ -46,8 +46,7 @@ export default class MainComponent extends Component {
                 "Accept": "application/sparql-results+json",
                 "Content-Type": "application/sparql-query"
             },
-            body: query,
-            Origin: "http://localhost:3000"
+            body: query
             })
             .then(response => {
                 if(response.ok){
