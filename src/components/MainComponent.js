@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import  Header  from './HeaderComponent';
 import Home from './HomeComponent';
-import Footer from './FooterComponent';
+
 import {ENDPOINTS} from '../shared/endpoints';
 import QueryComponent from './QueryComponent';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom' ;
+
 
 export default class MainComponent extends Component {
     constructor (props){
@@ -13,21 +14,23 @@ export default class MainComponent extends Component {
             endpoint: null,
             label: null,
             queryTime: null,
-            answer:{},
+            result: null,
             numberOfAnswers:0,
             error: null
         }
         this.configureEndpoint = this.configureEndpoint.bind(this);
         this.executeQuery = this.executeQuery.bind(this);
         this.resetResult = this.resetResult.bind(this);
+        
     }
+
+   
 
 
     /**
      * Function to execute query on the endpoint
      */
     executeQuery = async (query ) => {
-        alert(query);
         //reseting answer
         if( !this.state.endpoint ){
             this.setState({
@@ -37,14 +40,14 @@ export default class MainComponent extends Component {
         else{
             this.resetResult();
             const startTime = Date.now();
-            fetch(this.state.endpoint, {
+            await fetch(this.state.endpoint, {
             method: 'POST',
             headers: {
                 "Accept": "application/sparql-results+json",
-                "Content-Type": "application/sparql-query",
-                "Origin": "http://localhost:3000"
+                "Content-Type": "application/sparql-query"
             },
-            body: query
+            body: query,
+            Origin: "http://localhost:3000"
             })
             .then(response => {
                 if(response.ok){
@@ -72,20 +75,21 @@ export default class MainComponent extends Component {
                 this.setState({
                     numberOfAnswers: data.results.bindings.length
                 });
+              
                 //saving the answer
                 //  const  dataHeading = data.head
                 //  const dataResult = data.results
                this.setState({
-                    answer:{
-                        head:data.head,  results:data.results
-                    }
+                    result:data
                 }); 
+         
                 })
             .catch(error => {
                 this.setState({
                     error: error.message
                 });
             })
+            
         }
       }
 
@@ -98,7 +102,9 @@ export default class MainComponent extends Component {
       }
     
 
-  
+      /*
+      * later use reduc as the state is not stable (see configuration)
+      */
     configureEndpoint = (endpoint) => {
         this.setState({
             endpoint: endpoint,
@@ -120,7 +126,8 @@ export default class MainComponent extends Component {
                 <Header endpoints={ENDPOINTS} configureEndpoint = {this.configureEndpoint}/>
                 <Switch>
                     <Route path="/home" component={Home}/>
-                    <Route exact path="/query" component={() => <QueryComponent executeQuery={this.executeQuery} endpoint={this.state.endpoint} label={this.state.label}/>}/>                    
+                    <Route exact path="/query" component={() => <QueryComponent executeQuery={this.executeQuery} endpoint={this.state.endpoint} label={this.state.label} result={this.state.result}/>}/>                    
+                  
                     <Redirect to="/home" />
                 </Switch>
               
